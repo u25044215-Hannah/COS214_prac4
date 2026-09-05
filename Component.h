@@ -17,7 +17,7 @@ public:
   virtual int getChildCount() const;
 
   // State
-  virtual std::string getState() const;
+  virtual std::string getState() const = 0;
   virtual void setState(const std::string& newState) = 0;
 
   // Core identity
@@ -47,6 +47,7 @@ private:
   std::string name;
   std::string id;
   std::string description;
+  Component *parent;
 };
 
 #endif
