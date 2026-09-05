@@ -18,7 +18,7 @@ public:
 
   // State
   virtual std::string getState() const;
-  virtual void setState(State *state);
+  virtual void setState(const std::string& newState) = 0;
 
   // Core identity
   virtual std::string getName() const;
@@ -33,8 +33,9 @@ public:
 
 
   bool isOpen() const;
-  bool isInProgress();
+  bool isInProgress() const;
   bool isClosed() const;
+  virtual bool hasPriority(const std::string& level) const;
 
 protected:
   // Protected accessor for derived classes to manipulate the state pointer
