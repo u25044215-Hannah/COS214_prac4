@@ -5,7 +5,10 @@
 #include "Issue.h"
 #include "Project.h"
 #include "ProjectIterator.h"
+#include "PriorityDecorator.h"
 #include "Repo.h"
+#include "TagDecorator.h"
+#include "UnresolvedIssueIterator.h"
 #include <iostream>
 #include <memory>
 
@@ -160,6 +163,36 @@ string ProjectRegistry::getState(const string &id) const {
   return target->getState();
 }
 
+void ProjectRegistry::addPriority(const string &issueId,
+                                  const string &level) {
+  Component *issue = getComponent(issueId);
+  if (!issue) {
+    cout << "Issue '" << issueId << "' does not exist.\n";
+    return;
+  }
+
+  unique_ptr<IssueDecorator> decorator(
+      new PriorityDecorator(issue, level));
+  decorateIssue(issueId, std::move(decorator));
+}
+
+void ProjectRegistry::addTag(const string &issueId, const string &tag) {
+  Component *issue = getComponent(issueId);
+  if (!issue) {
+    cout << "Issue '" << issueId << "' does not exist.\n";
+    return;
+  }
+
+  unique_ptr<IssueDecorator> decorator(new TagDecorator(issue, tag));
+  decorateIssue(issueId, std::move(decorator));
+}
+
+bool ProjectRegistry::checkPriority(const string &issueId,
+                                    const string &level) const {
+  Component *issue = getComponent(issueId);
+  return issue && issue->hasPriority(level);
+}
+
 void ProjectRegistry::decorateIssue(const string &issueId,
                                     unique_ptr<IssueDecorator> decorator) {
   auto targetI = lookup.find(issueId);
@@ -223,6 +256,54 @@ void ProjectRegistry::printTree() const {
     if (!foundRoot) {
         cout << "The tree is empty.\n";
     }
+}
+
+void ProjectRegistry::printDepthFirst(const string &rootId) const {
+  Component *root = getComponent(rootId);
+  if (!root) {
+    cout << "Component '" << rootId << "' does not exist.\n";
+    return;
+  }
+
+  unique_ptr<ProjectIterator> iterator = root->createIterator();
+  if (!iterator) {
+    cout << "Component '" << rootId << "' cannot be traversed.\n";
+    return;
+  }
+
+  cout << "\n=== Depth-First Traversal: " << rootId << " ===\n";
+  while (iterator->hasNext()) {
+    Component *component = iterator->next();
+    if (component) {
+      cout << component->getID()
+           << " - " << component->getName()
+           << " [" << component->getState() << "]\n";
+    }
+  }
+}
+
+void ProjectRegistry::printUnresolved(const string &rootId) const {
+  Component *root = getComponent(rootId);
+  if (!root) {
+    cout << "Component '" << rootId << "' does not exist.\n";
+    return;
+  }
+
+  UnresolvedIssueIterator iterator(root);
+  cout << "\n=== Unresolved Issues: " << rootId << " ===\n";
+  if (!iterator.hasNext()) {
+    cout << "No unresolved issues.\n";
+    return;
+  }
+
+  while (iterator.hasNext()) {
+    Component *component = iterator.next();
+    if (component) {
+      cout << component->getID()
+           << " - " << component->getName()
+           << " [" << component->getState() << "]\n";
+    }
+  }
 }
 
 void ProjectRegistry::printNode(const Component* node, int depth) const {

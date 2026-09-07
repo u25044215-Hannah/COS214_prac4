@@ -44,6 +44,12 @@ public:
   std::string getState(const std::string &id) const;
 
   // Decoration
+  void addPriority(const std::string &issueId,
+                   const std::string &level);
+  void addTag(const std::string &issueId,
+              const std::string &tag);
+  bool checkPriority(const std::string &issueId,
+                     const std::string &level) const;
   void decorateIssue(const std::string &issueId,
                      std::unique_ptr<IssueDecorator> decorator);
 
@@ -52,6 +58,8 @@ public:
 
   // Debug / Utility
   void printTree() const;
+  void printDepthFirst(const std::string &rootId) const;
+  void printUnresolved(const std::string &rootId) const;
   void printNode(const Component* node, int depth) const;
 };
 

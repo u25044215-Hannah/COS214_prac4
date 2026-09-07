@@ -8,7 +8,6 @@
 #include "TagDecorator.h"
 #include <iostream>
 #include <memory>
-#include <utility>
 #include <cassert>
 
 using namespace std;
@@ -229,13 +228,17 @@ void testProjectRegistry() {
     registry.decorateIssue("missing", nullptr);
     registry.decorateIssue("issue-1", nullptr);
     registry.addChild("project-1", "issue-1");
-    std::unique_ptr<IssueDecorator> decorator(
-        new PriorityDecorator(registry.getComponent("issue-1"), "High"));
-    registry.decorateIssue("issue-1", std::move(decorator));
-    assert(registry.getComponent("issue-1")->hasPriority("High"));
+    registry.addPriority("issue-1", "High");
+    registry.addTag("issue-1", "Security");
+    assert(registry.checkPriority("issue-1", "High"));
+    assert(!registry.checkPriority("issue-1", "Low"));
+    assert(!registry.checkPriority("missing", "High"));
     assert(registry.getComponent("project-1")->getChild(0) ==
            registry.getComponent("issue-1"));
     registry.printTree();
+    registry.printDepthFirst("repo-1");
+    registry.printUnresolved("repo-1");
+    registry.printDepthFirst("missing");
 }
 
 void runStaticTests() {
@@ -451,6 +454,8 @@ void demonstrateRegistry() {
     ProjectRegistry registry;
     creator.build(&registry);
     registry.printTree();
+    registry.printDepthFirst("repo-1");
+    registry.printUnresolved("repo-1");
 }
 
 // ============================================================
