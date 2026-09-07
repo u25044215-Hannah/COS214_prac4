@@ -5,10 +5,10 @@
 #include <vector>
 
 /**
- * @brief This class is the composite in the hierachy. It is non owning.
+ * @brief This class is the composite in the hierarchy. It is non owning.
  * 
  */
-class Composite : Component {
+class Composite : public Component {
 protected:
   std::vector<Component *> children;
 

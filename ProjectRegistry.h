@@ -6,7 +6,6 @@
 #include <unordered_map>
 #include <vector>
 
-
 class IssueDecorator;
 class Component;
 class TemplateCreator;
