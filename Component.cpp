@@ -29,17 +29,15 @@ unique_ptr<ProjectIterator> Component::createIterator() const {
 }
 
 Component::Component(const string &name, const string &id, const string &desc)
-    : name(name), id(id), description(desc) {}
+    : name(name), id(id), description(desc), parent(nullptr) {}
 
-bool Component::isOpen() const { return (state->getName() == "Open"); }
+bool Component::isOpen() const { return (getState() == "Open"); }
 
-bool Component::isInProgress() const {
-  return (state->getName() == "InProgress");
-}
+bool Component::isInProgress() const { return (getState() == "InProgress"); }
 
-bool Component::isClosed() const { return (state->getName() == "Closed"); }
+bool Component::isClosed() const { return (getState() == "Closed"); }
 
-bool Component::isAssigned() const { return (state->getName() == "Assigned"); }
+bool Component::isAssigned() const { return (getState() == "Assigned"); }
 
 bool Component::hasPriority(const string &level) const { return false; }
 
@@ -48,3 +46,7 @@ State *Component::getStateObject() const { return state.get(); }
 void Component::setStateObject(unique_ptr<State> newState) {
   state = std::move(newState);
 }
+
+Component *Component::getParent() const { return parent; }
+
+void Component::setParent(Component *newParent) { parent = newParent; }

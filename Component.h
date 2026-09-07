@@ -148,6 +148,14 @@ public:
    * @param parent 
    */
   virtual void setParent(Component* parent);
+  
+  /**
+   * @brief Replaces the desired child with another. For the decorator pattern
+   * 
+   * @param oldChild 
+   * @param newChild 
+   */
+  virtual void replaceChild(Component *oldChild, Component* newChild);
 
 protected:
   // Protected accessor for derived classes to manipulate the state pointer
