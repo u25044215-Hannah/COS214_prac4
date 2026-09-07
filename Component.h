@@ -6,7 +6,7 @@
 #include <vector>
 
 class State;
-template <typename T> class ProjectIterator;
+class ProjectIterator;
 
 /**
  * @brief This class acts at the Component in the composite hierachy.
@@ -83,7 +83,7 @@ public:
    *
    * @return std::unique_ptr<ProjectIterator<Component>>
    */
-  virtual std::unique_ptr<ProjectIterator<Component>> createIterator() const;
+  virtual std::unique_ptr<ProjectIterator> createIterator() const;
 
   /**
    * @brief Construct a new Component object
@@ -119,6 +119,14 @@ public:
   bool isClosed() const;
 
   /**
+   * @brief Checks if the object has been assigned
+   * 
+   * @return true 
+   * @return false 
+   */
+  bool isAssigned() const;
+
+  /**
    * @brief Checks for the presence of the priority decorator
    *
    * @param level
@@ -126,6 +134,28 @@ public:
    * @return false
    */
   virtual bool hasPriority(const std::string &level) const;
+
+  /**
+   * @brief Get the Parent object
+   * 
+   * @return Component* 
+   */
+  virtual Component* getParent() const;
+
+  /**
+   * @brief Set the Parent object
+   * 
+   * @param parent 
+   */
+  virtual void setParent(Component* parent);
+  
+  /**
+   * @brief Replaces the desired child with another. For the decorator pattern
+   * 
+   * @param oldChild 
+   * @param newChild 
+   */
+  virtual void replaceChild(Component *oldChild, Component* newChild);
 
 protected:
   // Protected accessor for derived classes to manipulate the state pointer
