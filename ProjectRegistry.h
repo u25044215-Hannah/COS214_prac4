@@ -5,6 +5,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include "IssueDecorator.h"
 
 class IssueDecorator;
 class Component;
@@ -13,11 +14,10 @@ class TemplateCreator;
 class ProjectRegistry {
 private:
   std::unordered_map<std::string, std::unique_ptr<Component>> lookup;
-  std::unique_ptr<TemplateCreator> creator;
+  std::unordered_map<std::string, std::unique_ptr<Component>> decoratedComponents;
 
 public:
   ProjectRegistry() = default;
-  ProjectRegistry(std::unique_ptr<TemplateCreator> creator);
   ~ProjectRegistry() = default;
 
   // Lookup
@@ -25,9 +25,13 @@ public:
   bool exists(const std::string &id) const;
 
   // Factory Methods
-  void createProject(const std::string &id, const std::string &name,
+  void createProject(const std::string &name, const std::string &id,
+                     const std::string &deadline, int estimatedHours,
                      const std::string &desc = "");
-  void createIssue(const std::string &id, const std::string &name,
+  void createRepo(const std::string &name, const std::string &id,
+                  const std::string &desc, std::string owner, bool privateRepo,
+                  std::string language);
+  void createIssue(const std::string &name, const std::string &id, 
                    const std::string &desc = "");
 
   // Structure Operations
@@ -48,6 +52,7 @@ public:
 
   // Debug / Utility
   void printTree() const;
+  void printNode(const Component* node, int depth) const;
 };
 
 #endif

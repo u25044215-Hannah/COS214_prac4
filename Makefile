@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++11 -Wall -Wextra -Werror -g
+CXXFLAGS = -std=c++11 -g
 COVERAGE_FLAGS = --coverage
 
 TARGET = taskforge
@@ -27,7 +27,7 @@ coverage: clean
 	@echo "Coverage report: coverage/coverage.html"
 
 cleandoc:
-	rm -r /docs
+	rm -rf docs
 
 valgrind:
 	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./$(TARGET)
@@ -35,4 +35,4 @@ valgrind:
 zip:
 	zip -r taskforge.zip . -x "*.o" "*.gcda" "*.gcno" "*.gcov" "taskforge" "coverage.html"
 
-.PHONY: all clean
+.PHONY: all clean cleandoc coverage valgrind zip

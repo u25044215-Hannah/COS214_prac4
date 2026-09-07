@@ -7,6 +7,7 @@
 
 class State;
 class ProjectIterator;
+class Composite;
 
 /**
  * @brief This class acts at the Component in the composite hierarchy.
@@ -104,7 +105,7 @@ public:
    */
   Component(const std::string &name, const std::string &id,
             const std::string &desc = "");
-  virtual ~Component() = default;
+  virtual ~Component() ;
 
   /**
    * @brief Checks if the object is in open state
@@ -153,13 +154,6 @@ public:
   virtual Component *getParent() const;
 
   /**
-   * @brief Set the Parent object
-   *
-   * @param parent
-   */
-  virtual void setParent(Component *parent);
-
-  /**
    * @brief Replaces the desired child with another. For the decorator pattern
    *
    * @param oldChild
@@ -168,6 +162,15 @@ public:
   virtual void replaceChild(Component *oldChild, Component *newChild);
 
 protected:
+  friend class Composite;
+
+  /**
+   * @brief Set the parent object through hierarchy operations.
+   *
+   * @param parent
+   */
+  virtual void setParent(Component *parent);
+
   // Protected accessor for derived classes to manipulate the state pointer
   State *getStateObject() const;
   void setStateObject(std::unique_ptr<State> newState);

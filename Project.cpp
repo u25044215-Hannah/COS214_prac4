@@ -6,7 +6,7 @@
 using namespace std;
 
 Project::Project(const string &name, const string &id, const string &desc,
-                 string deadline, int estimatedHours)
+                 const string &deadline, int estimatedHours)
     : Composite(name, id, desc), deadline(deadline),
       estimatedHours(estimatedHours) {}
 
