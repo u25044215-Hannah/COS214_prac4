@@ -15,6 +15,9 @@ ProjectRegistry::ProjectRegistry(unique_ptr<TemplateCreator> creator) {
 
 Component *ProjectRegistry::getComponent(const string &id) const {
   auto it = lookup.find(id);
+  if (it == lookup.end()) {
+    return nullptr;
+  }
   return it->second.get();
 }
 
@@ -68,20 +71,83 @@ void ProjectRegistry::addChild(const string &parentId, const string &childId) {
 }
 
 void ProjectRegistry::removeChild(const string &parentId,
-                                  const string &childId) {}
+                                  const string &childId) {
+  auto parentI = lookup.find(parentId);
+  auto childI = lookup.find(childId);
+  if (parentI == lookup.end()) {
+    cout << "The specified parent does not exist!\n";
+    return;
+  }
+  if (childI == lookup.end()) {
+    cout << "The specified child does not exist!\n";
+    return;
+  }
+
+  Component *parent = parentI->second.get();
+  Component *child = childI->second.get();
+
+  parent->remove(child);
+}
 
 void ProjectRegistry::moveChild(const string &childId,
-                                const string &newParentId) {}
+                                const string &newParentId) {
+  auto parentI = lookup.find(newParentId);
+  auto childI = lookup.find(childId);
+  if (parentI == lookup.end()) {
+    cout << "The specified parent does not exist!\n";
+    return;
+  }
+  if (childI == lookup.end()) {
+    cout << "The specified child does not exist!\n";
+    return;
+  }
 
-void ProjectRegistry::setState(const string &id, const string &newState) {}
+  Component *parent = parentI->second.get();
+  Component *child = childI->second.get();
+  Component *oldParent = child->getParent();
+  oldParent->remove(child);
+  parent->add(child);
+}
+
+void ProjectRegistry::setState(const string &id, const string &newState) {
+  auto targetI = lookup.find(id);
+  if (targetI == lookup.end()) {
+    cout << "The specified target does not exist!\n";
+    return;
+  }
+
+  Component *target = targetI->second.get();
+  target->setState(newState);
+}
 
 string ProjectRegistry::getState(const string &id) const {
-  string returnValue;
-  return returnValue;
+  auto targetI = lookup.find(id);
+  if (targetI == lookup.end()) {
+    cout << "The specified target does not exist!\n";
+    return nullptr;
+  }
+  Component *target = targetI->second.get();
+  return target->getState();
 }
 
 void ProjectRegistry::decorateIssue(const string &issueId,
-                                    unique_ptr<IssueDecorator> decorator) {}
+                                    unique_ptr<IssueDecorator> decorator) {
+  auto targetI = lookup.find(issueId);
+  if (targetI == lookup.end()) {
+    cout << "Issue '" << issueId << "' does not exist.\n";
+    return;
+  }
+
+  Component *oldIssue = targetI->second.get();
+  Component *parent = oldIssue->getParent();
+
+  targetI->second = std::move(decorator); // Replace
+
+  if (parent) {
+    parent->replaceChild(oldIssue, targetI->second.get());
+  }
+  cout << "Decorated issue '" << issueId << "'.\n";
+}
 
 vector<string> ProjectRegistry::getChildIds(const string &parentId) const {
   vector<string> returnValue;
