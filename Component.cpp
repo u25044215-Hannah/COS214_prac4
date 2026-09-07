@@ -31,7 +31,9 @@ unique_ptr<ProjectIterator> Component::createIterator() const {
 Component::Component(const string &name, const string &id, const string &desc)
     : name(name), id(id), description(desc), parent(nullptr) {}
 
-bool Component::isOpen() const { return (getState() == "Open" || getState() == "Assigned"); }
+bool Component::isOpen() const {
+  return (getState() == "Open" || getState() == "Assigned");
+}
 
 bool Component::isInProgress() const { return (getState() == "InProgress"); }
 
@@ -51,6 +53,6 @@ Component *Component::getParent() const { return parent; }
 
 void Component::setParent(Component *newParent) { parent = newParent; }
 
-void Component::replaceChild(Component* oldChild, Component* newChild) {
-    cout << "Unable to replace child on issues";
+void Component::replaceChild(Component *oldChild, Component *newChild) {
+  cout << "Unable to replace child on issues";
 }

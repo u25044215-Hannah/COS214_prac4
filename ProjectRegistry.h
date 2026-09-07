@@ -25,9 +25,13 @@ public:
   bool exists(const std::string &id) const;
 
   // Factory Methods
-  void createProject(const std::string &id, const std::string &name,
+  void createProject(const std::string &name, const std::string &id,
+                     const std::string &deadline, int estimatedHours,
                      const std::string &desc = "");
-  void createIssue(const std::string &id, const std::string &name,
+  void createRepo(const std::string &name, const std::string &id,
+                  const std::string &desc, std::string owner, bool privateRepo,
+                  std::string language);
+  void createIssue(const std::string &name, const std::string &id, 
                    const std::string &desc = "");
 
   // Structure Operations
