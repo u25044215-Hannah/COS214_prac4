@@ -17,6 +17,11 @@ public:
             const std::string &desc = "");
   virtual ~Composite() = default;
 
+  /**
+   * @brief Aggregates the children states
+   * 
+   * @return std::string 
+   */
   std::string getState() const override;
   void setState(const std::string &newState) override;
 
@@ -25,7 +30,7 @@ public:
   Component *getChild(int index) const override;
   int getChildCount() const override;
 
-  std::unique_ptr<ProjectIterator<Component>> createIterator() const override;
+  std::unique_ptr<ProjectIterator> createIterator() const override;
 };
 
 #endif
