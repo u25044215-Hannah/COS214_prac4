@@ -1,5 +1,6 @@
 #include "Composite.h"
 #include "Component.h"
+#include "DepthFirstIterator.h"
 #include <algorithm>
 #include <memory>
 
@@ -87,6 +88,6 @@ int Composite::getChildCount() const {
 }
 
 unique_ptr<ProjectIterator> Composite::createIterator() const {
-  // TODO Please implement the create iterator method
-  return nullptr;
+  return unique_ptr<ProjectIterator>(
+      new DepthFirstIterator(const_cast<Composite *>(this)));
 }
