@@ -4,6 +4,7 @@
 #include "Issue.h"
 #include "Project.h"
 #include "Repo.h"
+#include <iostream>
 #include <memory>
 
 using namespace std;
@@ -41,7 +42,30 @@ void ProjectRegistry::createIssue(const string &name, const string &id,
   lookup.emplace(id, unique_ptr<Component>(new Issue(name, id, desc)));
 }
 
-void ProjectRegistry::addChild(const string &parentId, const string &childId) {}
+void ProjectRegistry::addChild(const string &parentId, const string &childId) {
+  auto parentI = lookup.find(parentId);
+  auto childI = lookup.find(childId);
+  if (parentI == lookup.end()) {
+    cout << "The specified parent does not exist!\n";
+    return;
+  }
+  if (childI == lookup.end()) {
+    cout << "The specified child does not exist!\n";
+    return;
+  }
+
+  Component *parent = parentI->second.get();
+  Component *child = childI->second.get();
+
+  if (child->getParent() != nullptr) {
+    cout << "Child '" << childId << "' already belongs to '"
+         << child->getParent()->getID() << "'.\n"
+         << "Use the move command to move it.\n";
+    return;
+  }
+
+  parent->add(child);
+}
 
 void ProjectRegistry::removeChild(const string &parentId,
                                   const string &childId) {}
