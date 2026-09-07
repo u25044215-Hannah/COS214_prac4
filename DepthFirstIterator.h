@@ -14,7 +14,7 @@
  * This means changes to the hierarchy do not change an iterator that is
  * already in progress.
  */
-class DepthFirstIterator : public ProjectIterator<Component> {
+class DepthFirstIterator : public ProjectIterator {
 
 private:
     std::vector<Component*> traversal;

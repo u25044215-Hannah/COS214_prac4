@@ -1,5 +1,6 @@
 
 #include "Component.h"
+#include "ProjectIterator.h"
 #include "State.h"
 #include <iostream>
 #include <memory>
@@ -30,6 +31,8 @@ unique_ptr<ProjectIterator> Component::createIterator() const {
 
 Component::Component(const string &name, const string &id, const string &desc)
     : name(name), id(id), description(desc), parent(nullptr) {}
+    
+Component::~Component() = default;
 
 bool Component::isOpen() const { return (getState() == "Open" || getState() == "Assigned"); }
 

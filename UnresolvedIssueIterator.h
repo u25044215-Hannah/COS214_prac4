@@ -12,7 +12,7 @@
  *
  * This iterator uses a snapshot traversal policy.
  */
-class UnresolvedIssueIterator : public ProjectIterator<Component> {
+class UnresolvedIssueIterator : public ProjectIterator {
 
 private:
     std::vector<Component*> unresolvedItems;

@@ -94,7 +94,7 @@ public:
    */
   Component(const std::string &name, const std::string &id,
             const std::string &desc = "");
-  virtual ~Component() = default;
+  virtual ~Component() ;
 
   /**
    * @brief Checks if the object is in open state

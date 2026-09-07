@@ -1,13 +1,11 @@
 #ifndef PROJECTITERATOR_H
 #define PROJECTITERATOR_H
 
+class Component;
+
 /**
- * @brief Abstract iterator interface used to traverse TaskForge components.
- *
- * Concrete iterators implement different ways of traversing
- * the project hierarchy.
+ * @brief Abstract iterator interface for traversing TaskForge components.
  */
-template <typename T>
 class ProjectIterator {
 public:
     virtual ~ProjectIterator() = default;
@@ -16,7 +14,7 @@ public:
     virtual bool hasNext() const = 0;
 
     // Returns the next component in the traversal
-    virtual T* next() = 0;
+    virtual Component* next() = 0;
 
     // Moves the iterator back to the beginning
     virtual void reset() = 0;
