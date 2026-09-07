@@ -2,6 +2,10 @@
 #define REPO_H
 #include "Composite.h"
 
+/**
+ * @brief This class is the top level composite modelling the repository
+ * 
+ */
 class Repo : public Composite {
 private:
   std::string owner;

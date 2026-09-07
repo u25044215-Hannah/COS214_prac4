@@ -9,10 +9,20 @@ class State;
 class ProjectIterator;
 
 /**
- * @brief This class acts at the Component in the composite hierachy.
+ * @brief This class acts at the Component in the composite hierarchy.
  *
  */
 class Component {
+
+private:
+  std::unique_ptr<State> state;
+  Component *parent;
+
+protected:
+  std::string name;
+  std::string id;
+  std::string description;
+
 public:
   // Composite
 
@@ -120,9 +130,9 @@ public:
 
   /**
    * @brief Checks if the object has been assigned
-   * 
-   * @return true 
-   * @return false 
+   *
+   * @return true
+   * @return false
    */
   bool isAssigned() const;
 
@@ -137,37 +147,30 @@ public:
 
   /**
    * @brief Get the Parent object
-   * 
-   * @return Component* 
+   *
+   * @return Component*
    */
-  virtual Component* getParent() const;
+  virtual Component *getParent() const;
 
   /**
    * @brief Set the Parent object
-   * 
-   * @param parent 
+   *
+   * @param parent
    */
-  virtual void setParent(Component* parent);
-  
+  virtual void setParent(Component *parent);
+
   /**
    * @brief Replaces the desired child with another. For the decorator pattern
-   * 
-   * @param oldChild 
-   * @param newChild 
+   *
+   * @param oldChild
+   * @param newChild
    */
-  virtual void replaceChild(Component *oldChild, Component* newChild);
+  virtual void replaceChild(Component *oldChild, Component *newChild);
 
 protected:
   // Protected accessor for derived classes to manipulate the state pointer
   State *getStateObject() const;
   void setStateObject(std::unique_ptr<State> newState);
-
-private:
-  std::unique_ptr<State> state;
-  std::string name;
-  std::string id;
-  std::string description;
-  Component *parent;
 };
 
 #endif

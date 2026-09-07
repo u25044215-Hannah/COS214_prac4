@@ -2,6 +2,10 @@
 #define PROJECT_H
 #include "Component.h"
 
+/**
+ * @brief This is the midlevel composite which groups issues into a larger project
+ * 
+ */
 class Project : public Component {
     private:
     std::string deadline;
