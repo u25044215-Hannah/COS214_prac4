@@ -1,17 +1,16 @@
 
 #include "ProjectRegistry.h"
 #include "Component.h"
+#include "Composite.h"
 #include "Issue.h"
 #include "Project.h"
+#include "ProjectIterator.h"
 #include "Repo.h"
 #include <iostream>
 #include <memory>
 
 using namespace std;
 
-ProjectRegistry::ProjectRegistry(unique_ptr<TemplateCreator> creator) {
-  this->creator = std::move(creator);
-}
 
 Component *ProjectRegistry::getComponent(const string &id) const {
   auto it = lookup.find(id);
@@ -25,9 +24,13 @@ bool ProjectRegistry::exists(const string &id) const {
   return lookup.find(id) != lookup.end();
 }
 
-void ProjectRegistry::createProject(const string &id, const string &name,
+void ProjectRegistry::createProject(const string &name, const string &id,
                                     const string &deadline, int estimatedHours,
                                     const string &desc) {
+  if (exists(id)) {
+    cout << "Component with ID '" << id << "' already exists.\n";
+    return;
+  }
 
   lookup.emplace(id, unique_ptr<Component>(new Project(name, id, desc, deadline,
                                                        estimatedHours)));
@@ -36,12 +39,22 @@ void ProjectRegistry::createProject(const string &id, const string &name,
 void ProjectRegistry::createRepo(const string &name, const string &id,
                                  const string &desc, string owner,
                                  bool privateRepo, string language) {
+  if (exists(id)) {
+    cout << "Component with ID '" << id << "' already exists.\n";
+    return;
+  }
+
   lookup.emplace(id, unique_ptr<Component>(new Repo(name, id, desc, owner,
                                                     privateRepo, language)));
 }
 
 void ProjectRegistry::createIssue(const string &name, const string &id,
                                   const string &desc) {
+  if (exists(id)) {
+    cout << "Component with ID '" << id << "' already exists.\n";
+    return;
+  }
+
   lookup.emplace(id, unique_ptr<Component>(new Issue(name, id, desc)));
 }
 
@@ -105,8 +118,25 @@ void ProjectRegistry::moveChild(const string &childId,
   Component *parent = parentI->second.get();
   Component *child = childI->second.get();
   Component *oldParent = child->getParent();
+  Composite *compositeParent = dynamic_cast<Composite *>(parent);
+  if (!compositeParent) {
+    cout << "The specified parent cannot contain children!\n";
+    return;
+  }
+  if (!oldParent) {
+    cout << "The specified child is not attached to a parent!\n";
+    return;
+  }
+  for (Component *ancestor = parent; ancestor != nullptr;
+       ancestor = ancestor->getParent()) {
+    if (ancestor == child) {
+      cout << "Cannot move a component beneath itself or its descendant.\n";
+      return;
+    }
+  }
+
   oldParent->remove(child);
-  parent->add(child);
+  compositeParent->add(child);
 }
 
 void ProjectRegistry::setState(const string &id, const string &newState) {
@@ -124,7 +154,7 @@ string ProjectRegistry::getState(const string &id) const {
   auto targetI = lookup.find(id);
   if (targetI == lookup.end()) {
     cout << "The specified target does not exist!\n";
-    return nullptr;
+    return "";
   }
   Component *target = targetI->second.get();
   return target->getState();
@@ -141,7 +171,15 @@ void ProjectRegistry::decorateIssue(const string &issueId,
   Component *oldIssue = targetI->second.get();
   Component *parent = oldIssue->getParent();
 
-  targetI->second = std::move(decorator); // Replace
+  if (!decorator) {
+    cout << "Decorator cannot be null.\n";
+    return;
+  }
+
+  const string retainedId = issueId + "#wrapped#" +
+                            to_string(decoratedComponents.size());
+  decoratedComponents.emplace(retainedId, std::move(targetI->second));
+  targetI->second = std::move(decorator);
 
   if (parent) {
     parent->replaceChild(oldIssue, targetI->second.get());
@@ -150,8 +188,61 @@ void ProjectRegistry::decorateIssue(const string &issueId,
 }
 
 vector<string> ProjectRegistry::getChildIds(const string &parentId) const {
-  vector<string> returnValue;
-  return returnValue;
+  vector<string> result;
+
+    auto it = lookup.find(parentId);
+    if (it == lookup.end()) {
+        cout << "Parent '" << parentId << "' does not exist.\n";
+        return result;
+    }
+
+    Component* parent = it->second.get();
+
+    for (int index = 0; index < parent->getChildCount(); ++index) {
+    Component* child = parent->getChild(index);
+        if (child) {
+            result.push_back(child->getID());
+        }
+    }
+
+    return result;
 }
 
-void ProjectRegistry::printTree() const {}
+void ProjectRegistry::printTree() const {
+  cout << "\n=== TaskForge Tree ===\n";
+
+    bool foundRoot = false;
+    for (const auto& pair : lookup) {
+        const Component* node = pair.second.get();
+        if (node->getParent() == nullptr) {
+            foundRoot = true;
+            printNode(node, 0);
+        }
+    }
+
+    if (!foundRoot) {
+        cout << "The tree is empty.\n";
+    }
+}
+
+void ProjectRegistry::printNode(const Component* node, int depth) const {
+    if (!node) return;
+
+    for (int i = 0; i < depth; ++i) {
+        cout << "  ";
+    }
+
+    // Print the node
+    cout << "├── " << node->getName()
+         << " (" << node->getID() << ")"
+         << " [" << node->getState() << "]"
+         << " - " << node->getDescription()
+         << "\n";
+
+    for (int index = 0; index < node->getChildCount(); ++index) {
+        Component* child = node->getChild(index);
+        if (child) {
+            printNode(child, depth + 1);
+        }
+    }
+}

@@ -27,6 +27,7 @@ public:
 
   void add(Component *child) override;
   void remove(Component *child) override;
+  void replaceChild(Component *oldChild, Component *newChild) override;
   Component *getChild(int index) const override;
   int getChildCount() const override;
 

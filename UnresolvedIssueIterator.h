@@ -5,6 +5,7 @@
 #include "Component.h"
 
 #include <cstddef>
+#include <unordered_set>
 #include <vector>
 
 /**
@@ -16,6 +17,7 @@ class UnresolvedIssueIterator : public ProjectIterator {
 
 private:
     std::vector<Component*> unresolvedItems;
+    std::unordered_set<Component*> visited;
     std::size_t currentPosition;
 
     void findUnresolved(Component* component);

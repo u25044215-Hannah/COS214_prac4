@@ -10,6 +10,10 @@ void UnresolvedIssueIterator::findUnresolved(Component* component) {
         return;
     }
 
+    if (!visited.insert(component).second) {
+        return;
+    }
+
     // Leaf components represent individual work items.
     if (component->getChildCount() == 0) {
         if (!component->isClosed()) {

@@ -8,6 +8,6 @@ TagDecorator::TagDecorator(
 }
 
 std::string TagDecorator::getDescription() const {
-    return wrappedComponent->getDescription()
+    return (wrappedComponent ? wrappedComponent->getDescription() : description)
         + " [Tag: " + tag + "]";
 }

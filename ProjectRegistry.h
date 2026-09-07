@@ -5,6 +5,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include "IssueDecorator.h"
 
 class IssueDecorator;
 class Component;
@@ -13,11 +14,10 @@ class TemplateCreator;
 class ProjectRegistry {
 private:
   std::unordered_map<std::string, std::unique_ptr<Component>> lookup;
-  std::unique_ptr<TemplateCreator> creator;
+  std::unordered_map<std::string, std::unique_ptr<Component>> decoratedComponents;
 
 public:
   ProjectRegistry() = default;
-  ProjectRegistry(std::unique_ptr<TemplateCreator> creator);
   ~ProjectRegistry() = default;
 
   // Lookup
@@ -52,6 +52,7 @@ public:
 
   // Debug / Utility
   void printTree() const;
+  void printNode(const Component* node, int depth) const;
 };
 
 #endif

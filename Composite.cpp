@@ -19,6 +19,16 @@ string Composite::getState() const {
     if (!child) {
       continue;
     }
+    if (child->getState() == "Review") {
+      return "Review";
+    }
+  }
+
+  // Check for InProgress children
+  for (auto child : children) {
+    if (!child) {
+      continue;
+    }
     if (child->getState() == "InProgress") {
       return "InProgress";
     }
@@ -62,6 +72,18 @@ void Composite::setState(const string &newState) {
 }
 
 void Composite::add(Component *child) {
+  if (!child || child == this || child->getParent() != nullptr ||
+      find(children.begin(), children.end(), child) != children.end()) {
+    return;
+  }
+
+  for (Component *ancestor = this; ancestor != nullptr;
+       ancestor = ancestor->getParent()) {
+    if (ancestor == child) {
+      return;
+    }
+  }
+
   children.push_back(child);
   child->setParent(this);
 }
@@ -74,6 +96,29 @@ void Composite::remove(Component *child) {
     children.erase(it);
     child->setParent(nullptr);
   }
+}
+
+void Composite::replaceChild(Component *oldChild, Component *newChild) {
+  if (!oldChild || !newChild || oldChild == newChild ||
+      newChild == this || newChild->getParent() != nullptr) {
+    return;
+  }
+
+  for (Component *ancestor = this; ancestor != nullptr;
+       ancestor = ancestor->getParent()) {
+    if (ancestor == newChild) {
+      return;
+    }
+  }
+
+  auto it = find(children.begin(), children.end(), oldChild);
+  if (it == children.end()) {
+    return;
+  }
+
+  *it = newChild;
+  oldChild->setParent(nullptr);
+  newChild->setParent(this);
 }
 
 Component *Composite::getChild(int index) const {

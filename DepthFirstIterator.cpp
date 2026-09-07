@@ -10,6 +10,10 @@ void DepthFirstIterator::buildTraversal(Component* component) {
         return;
     }
 
+    if (!visited.insert(component).second) {
+        return;
+    }
+
     // First visit the current component
     traversal.push_back(component);
 

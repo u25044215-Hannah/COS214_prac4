@@ -5,6 +5,7 @@
 #include "Component.h"
 
 #include <cstddef>
+#include <unordered_set>
 #include <vector>
 
 /**
@@ -18,6 +19,7 @@ class DepthFirstIterator : public ProjectIterator {
 
 private:
     std::vector<Component*> traversal;
+    std::unordered_set<Component*> visited;
     std::size_t currentPosition;
 
     // Recursively builds the depth-first traversal
