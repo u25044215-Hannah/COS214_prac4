@@ -3,6 +3,7 @@ FROM ubuntu:24.04
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         build-essential \
+        gdb \
         valgrind && \
     rm -rf /var/lib/apt/lists/*
 
@@ -12,4 +13,4 @@ COPY . .
 
 RUN make
 
-CMD ["make", "valgrind"]
+CMD ["./taskforge"]

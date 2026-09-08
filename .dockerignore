@@ -2,3 +2,7 @@
 *.zip
 *.o
 .gitignore
+*.zip
+*.jpg
+*.docx
+*.pdf
